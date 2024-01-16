@@ -1,9 +1,7 @@
+import MainLayout from "./components/layout/MainLayout";
+
 const App = () => {
-  return (
-    <div>
-      <h1>PH University Management System</h1>
-    </div>
-  );
+  return <MainLayout />;
 };
 
 export default App;

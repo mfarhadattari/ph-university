@@ -1,14 +1,10 @@
 import { Layout, Menu } from "antd";
-import { NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { adminSidebarItems } from "../../routes/admin.route";
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const items = [
-  {
-    key: "Dashboard",
-    label: <NavLink to="/admin/dashboard">Dashboard</NavLink>,
-  },
-];
+const items = adminSidebarItems;
 
 const MainLayout = () => {
   return (

@@ -13,7 +13,7 @@ const Login = () => {
   const [loginUser] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const redirectURL = useLocation().state.from || "/";
+  const location = useLocation();
 
   const onFinish = async (values: TLoginCredential) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,6 +27,10 @@ const Login = () => {
       };
       dispatch(setUser(userInfo));
       Toast({ icon: "success", title: res.data.message });
+      const redirectURL =
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        location?.state?.from || `/${(user as any).role}/dashboard`;
+
       navigate(redirectURL);
     } else if (res.error && res.error.data.success === false) {
       const error = res.error.data;

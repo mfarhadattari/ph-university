@@ -1,7 +1,30 @@
 import { Button, Form, Input } from "antd";
+import Toast from "../components/ui/Toast";
+import {
+  TLoginCredential,
+  useLoginMutation,
+} from "../redux/features/auth/authApi";
+import { setUser } from "../redux/features/auth/authSlice";
+import { useAppDispatch } from "../redux/hooks";
 const Login = () => {
-  const onFinish = (values) => {
-    console.log(values);
+  const [loginUser] = useLoginMutation();
+  const dispatch = useAppDispatch();
+  const onFinish = async (values: TLoginCredential) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = (await loginUser(values)) as any;
+    if (res.data && res.data.success === true) {
+      const data = res.data.data;
+      const userInfo = {
+        token: data.accessToken,
+      };
+      dispatch(setUser(userInfo));
+      Toast({ icon: "success", title: res.data.message });
+    } else if (res.error && res.error.data.success === false) {
+      const error = res.error.data;
+      Toast({ icon: "error", title: error.message });
+    } else {
+      Toast({ icon: "warning", title: "Something went wrong!" });
+    }
   };
 
   return (
@@ -37,8 +60,9 @@ const Login = () => {
             fontWeight: 500,
           }}
           label="User Id"
-          name="userId"
+          name="id"
           rules={[{ required: true, message: "Please input your user id!" }]}
+          initialValue="A-0001"
         >
           <Input placeholder="Input your user id" />
         </Form.Item>
@@ -49,6 +73,7 @@ const Login = () => {
           label="Password"
           name="password"
           rules={[{ required: true, message: "Please input your password!" }]}
+          initialValue="ph@university"
         >
           <Input.Password placeholder="Input your password" type="password" />
         </Form.Item>

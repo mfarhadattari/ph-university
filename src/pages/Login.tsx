@@ -1,4 +1,6 @@
 import { Button, Form, Input } from "antd";
+import { jwtDecode } from "jwt-decode";
+import { useLocation, useNavigate } from "react-router-dom";
 import Toast from "../components/ui/Toast";
 import {
   TLoginCredential,
@@ -6,19 +8,26 @@ import {
 } from "../redux/features/auth/authApi";
 import { setUser } from "../redux/features/auth/authSlice";
 import { useAppDispatch } from "../redux/hooks";
+
 const Login = () => {
   const [loginUser] = useLoginMutation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const redirectURL = useLocation().state.from || "/";
+
   const onFinish = async (values: TLoginCredential) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res = (await loginUser(values)) as any;
     if (res.data && res.data.success === true) {
       const data = res.data.data;
+      const user = jwtDecode(data.accessToken);
       const userInfo = {
         token: data.accessToken,
+        user,
       };
       dispatch(setUser(userInfo));
       Toast({ icon: "success", title: res.data.message });
+      navigate(redirectURL);
     } else if (res.error && res.error.data.success === false) {
       const error = res.error.data;
       Toast({ icon: "error", title: error.message });

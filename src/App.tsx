@@ -1,7 +1,12 @@
 import MainLayout from "./components/layout/MainLayout";
+import PrivateRoute from "./components/layout/PrivateRoute";
 
 const App = () => {
-  return <MainLayout />;
+  return (
+    <PrivateRoute>
+      <MainLayout />
+    </PrivateRoute>
+  );
 };
 
 export default App;

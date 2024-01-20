@@ -1,5 +1,6 @@
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
+import { useAppSelector } from "../../redux/hooks";
 import { adminSidebarItems } from "../../routes/admin.route";
 import { facultySidebarItems } from "../../routes/faculty.route";
 import { studentSidebarItems } from "../../routes/student.route";
@@ -13,7 +14,9 @@ const USER_ROLE = {
 
 const Sidebar = () => {
   let items;
-  const role: TRole = "student";
+  const user = useAppSelector((state) => state.auth.user);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const role: TRole = (user as any).role;
 
   switch (role) {
     case USER_ROLE.ADMIN:
@@ -30,16 +33,7 @@ const Sidebar = () => {
   }
 
   return (
-    <Sider
-      breakpoint="lg"
-      collapsedWidth="0"
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
-      onCollapse={(collapsed, type) => {
-        console.log(collapsed, type);
-      }}
-    >
+    <Sider breakpoint="lg" collapsedWidth="0">
       <div
         style={{
           width: "100%",

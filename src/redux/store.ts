@@ -8,7 +8,7 @@ import {
   REHYDRATE,
   persistStore,
 } from "redux-persist";
-import baseApi from "./apis/baseApi";
+import baseApi from "./api/baseApi";
 import { persistedAuthReducer } from "./features/auth/authSlice";
 
 export const store = configureStore({

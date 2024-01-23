@@ -1,12 +1,13 @@
 import { Button, Form, Input } from "antd";
 import { jwtDecode } from "jwt-decode";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Toast from "../components/ui/Toast";
 import {
   TLoginCredential,
   useLoginMutation,
 } from "../redux/features/auth/authApi";
-import { setUser } from "../redux/features/auth/authSlice";
+import { TUser, setUser } from "../redux/features/auth/authSlice";
 import { useAppDispatch } from "../redux/hooks";
 
 const Login = () => {
@@ -15,18 +16,23 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onFinish = async (values: TLoginCredential) => {
+    setIsLoading(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const res = (await loginUser(values)) as any;
     if (res.data && res.data.success === true) {
       const data = res.data.data;
-      const user = jwtDecode(data.accessToken);
+      const user = jwtDecode(data.accessToken) as TUser;
       const userInfo = {
         token: data.accessToken,
         user,
       };
       dispatch(setUser(userInfo));
-      Toast({ icon: "success", title: res.data.message });
+      setIsLoading(false);
+
+      await Toast({ icon: "success", title: res.data.message });
       const redirectURL =
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         location?.state?.from || `/${(user as any).role}/dashboard`;
@@ -34,8 +40,10 @@ const Login = () => {
       navigate(redirectURL);
     } else if (res.error && res.error.data.success === false) {
       const error = res.error.data;
+      setIsLoading(false);
       Toast({ icon: "error", title: error.message });
     } else {
+      setIsLoading(false);
       Toast({ icon: "warning", title: "Something went wrong!" });
     }
   };
@@ -91,7 +99,12 @@ const Login = () => {
           <Input.Password placeholder="Input your password" type="password" />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%" }}
+            loading={isLoading}
+          >
             Login
           </Button>
         </Form.Item>

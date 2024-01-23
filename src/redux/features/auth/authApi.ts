@@ -1,4 +1,4 @@
-import baseApi from "../../apis/baseApi";
+import baseApi from "../../api/baseApi";
 
 export type TLoginCredential = {
   id: string;

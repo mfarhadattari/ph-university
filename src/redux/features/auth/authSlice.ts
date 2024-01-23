@@ -1,9 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { TRole } from "../../../types";
+
+export type TUser = {
+  id: string;
+  role: TRole;
+  iat: number;
+  exp: number;
+};
 
 type TAuthState = {
-  user: null | object;
+  user: null | TUser;
   token: null | string;
 };
 

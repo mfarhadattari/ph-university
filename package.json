@@ -24,6 +24,7 @@
     "sweetalert2": "^11.10.3"
   },
   "devDependencies": {
+    "@types/antd": "^1.0.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",

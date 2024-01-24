@@ -1,7 +1,9 @@
-import { Button, Form, Input } from "antd";
+import { Button } from "antd";
 import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
+import PHInput from "../components/form/PHInput";
 import Toast from "../components/ui/Toast";
 import {
   TLoginCredential,
@@ -9,6 +11,7 @@ import {
 } from "../redux/features/auth/authApi";
 import { TUser, setUser } from "../redux/features/auth/authSlice";
 import { useAppDispatch } from "../redux/hooks";
+import PHFrom from "./../components/form/PHFrom";
 
 const Login = () => {
   const [loginUser] = useLoginMutation();
@@ -18,10 +21,10 @@ const Login = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onFinish = async (values: TLoginCredential) => {
+  const onFormSubmit = async (data: TLoginCredential) => {
     setIsLoading(true);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const res = (await loginUser(values)) as any;
+    const res = (await loginUser(data)) as any;
     if (res.data && res.data.success === true) {
       const data = res.data.data;
       const user = jwtDecode(data.accessToken) as TUser;
@@ -57,9 +60,7 @@ const Login = () => {
         minHeight: "100vh",
       }}
     >
-      <Form
-        onFinish={onFinish}
-        layout="vertical"
+      <div
         style={{
           maxWidth: "100%",
           minWidth: 320,
@@ -72,33 +73,32 @@ const Login = () => {
         <h3
           style={{
             textAlign: "center",
+            marginBottom: "20px",
           }}
         >
           User Login
         </h3>
-        <Form.Item
-          style={{
-            fontWeight: 500,
+        <PHFrom
+          defaultValues={{
+            id: "A-0001",
+            password: "ph@university",
           }}
-          label="User Id"
-          name="id"
-          rules={[{ required: true, message: "Please input your user id!" }]}
-          initialValue="A-0001"
+          onSubmit={onFormSubmit as SubmitHandler<FieldValues>}
         >
-          <Input placeholder="Input your user id" />
-        </Form.Item>
-        <Form.Item
-          style={{
-            fontWeight: 500,
-          }}
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
-          initialValue="ph@university"
-        >
-          <Input.Password placeholder="Input your password" type="password" />
-        </Form.Item>
-        <Form.Item>
+          <PHInput
+            type="text"
+            label="UserId"
+            name="id"
+            placeholder="Input your userId"
+            requiredMessage="User Id is required"
+          />
+          <PHInput
+            type="password"
+            label="Password"
+            name="password"
+            placeholder="Input your password"
+            requiredMessage="Password is required"
+          />
           <Button
             type="primary"
             htmlType="submit"
@@ -107,8 +107,8 @@ const Login = () => {
           >
             Login
           </Button>
-        </Form.Item>
-      </Form>
+        </PHFrom>
+      </div>
     </div>
   );
 };
